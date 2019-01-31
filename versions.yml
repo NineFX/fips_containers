@@ -1,0 +1,45 @@
+BoringCrypto: [
+  {
+    version: '1.8',
+    url: 'https://github.com/golang/go/tarball/dev.boringcrypto.go1.8',
+    sha256: '42cb4dcdb59a0be3ad52bf6cf33489301d039e08'
+  },
+  {
+    version: '1.9',
+    url: 'https://github.com/golang/go/tarball/dev.boringcrypto.go1.9',
+    sha256: '0bad1bef406e987b7b749efc3bb7ab5d08b36a1c'
+  },
+  {
+    version: '1.10',
+    url: 'https://github.com/golang/go/tarball/dev.boringcrypto.go1.10',
+    sha256: '8b246fe0f5950315035944868b0523e6d75d1171'
+  },
+  {
+    version: '1.11',
+    url: 'https://github.com/golang/go/tarball/dev.boringcrypto.go1.11',
+    sha256: '572c4bce6792d169d467aad26781fa8cab52f8d6'
+  }
+]
+
+OpenSSL-fips: [
+  {
+    version: '0.9.7',
+    url: 'https://github.com/openssl/openssl/tarball/OpenSSL-fips-0_9_7-stable',
+    sha256: '55e81315dc56e80805e6c75ce695aba4aea31182'
+  },
+  {
+    version: '0.9.8',
+    url: 'https://github.com/openssl/openssl/tarball/OpenSSL-fips-0_9_8-stable',
+    sha256: '6f93fd56857e84fffd9363a0e3cc883f4a9f5d12'
+  },
+  {
+    version: '1.2',
+    url: 'https://github.com/openssl/openssl/tarball/OpenSSL-fips-1_2-stable',
+    sha256: '0b603bcc34c1d903d7fa5201dbc041962ce238f2'
+  },
+  {
+    version: '2.0',
+    url: 'https://github.com/openssl/openssl/tarball/OpenSSL-fips-2_0-stable',
+    sha256: 'd11e6a4410d5aae70ad545d085d344644c33d9cc'
+  }
+]
