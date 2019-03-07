@@ -2,9 +2,9 @@ import yaml
 from os import popen
 
 # READ IN YAML FILE
-with open('fips-packages.yml', 'r') as stream:
+with open('fips-packages.yml', 'r') as yamlstream:
     try:
-        raw = yaml.load(stream)
+        raw = yaml.load(yamlstream)
     except yaml.YAMLError as e:
         print e
 
@@ -17,5 +17,8 @@ for package in raw:
     url = package[package.keys()[0]]['url']
     sha256 = package[package.keys()[0]]['sha256']
     if(verify(url, sha256)):
-        print 'sha256 sum check failed for package: ' + package.keys()[0] + "! exiting."
+        print 'sha256 sum check failed for package ' + package.keys()[0] + ', exiting...'
         break
+    # ALPINE DOCKERFILE GENERATION STEP
+    with open(package.keys()[0] + '-fips-alpine.Dockerfile', 'w') as fstream:
+      fstream.write('FROM alpine:latest')
