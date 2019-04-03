@@ -22,8 +22,8 @@ RUN set -eux; \
         curl \
         virtualenv; \
     # Building EnvoyProxy
-    echo "build --action_env=PATH=\"/usr/local/bin:/opt/local/bin:/usr/bin:/bin\"" >> $HOME/.bazelrc; \
     go get -u github.com/bazelbuild/buildtools/buildifier; \
     export BUILDIFIER_BIN="$GOPATH/bin/buildifier"; \
-    bazel build //source/exe:envoy-static --define boringssl=fips; \
+    touch WORKSPACE; \
+    bazel build //source/exe:envoy-static; \
     envoy --version | grep "BoringSSL-FIPS"
