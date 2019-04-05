@@ -6,8 +6,7 @@ with open('packages.yml', 'r') as yamlstream:
     try:
         raw = yaml.load(yamlstream)
     except yaml.YAMLError as e:
-        print e
-
+        print(e)
 
 # Validates the sha256 sum of a package.
 # Returns true if the expected sha256 matches the actual sha256
