@@ -1,27 +1,18 @@
-FROM ish512/fips-go:1.0-ubuntu AS build
-ENV BORINGCRYPTO_VERSION 20180730
-WORKDIR /
-RUN set -eux; \
-    apt-get update -y && apt-get install -y \
-        ca-certificates \
-        gcc \
-        g++ \
-        make \
-        cmake \
-        git-core \
-        perl; \
-    git clone --single-branch --branch fips-${BORINGCRYPTO_VERSION} https://boringssl.googlesource.com/boringssl; \
-    cd boringssl; \
-    mkdir build; \
-    cd build; \
-    cmake ..; \
-    make; \
-    cd ..; \
-    go run util/all_tests.go; \
-    cd ssl/test/runner && go test
+FROM ubuntu:18.04 AS build
 
-FROM ubuntu:latest
 RUN set -eux; \
-    apt-get update -y && apt-get install -y ca-certificates
-COPY --from=build /boringssl .
-WORKDIR /boringssl
+    apt-get -y update; \
+    apt-get -y install \
+        ca-certificates \
+        software-properties-common \
+        wget \
+        gnupg2 \
+        tar \
+        ninja-build=1.8.2\*; \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -; \
+    apt-get -y update; \
+    apt-add-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-6.0 main"; \
+    apt-get -y install clang-6.0 lld-6.0; \
+    wget -O - https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz; \
+    tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz; \
+    export PATH=$PATH:/usr/local/go/bin
