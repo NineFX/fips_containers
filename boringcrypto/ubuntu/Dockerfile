@@ -1,11 +1,10 @@
 ###############################################################################
 ###############################################################################
-# This Docker build for BoringSSL is FIPS 140-2 validated using the
+# This Docker build for BoringSSL is FIPS 140-2 validated by the
 # BoringCrypto FIPS 140-2 Security Policy published by Google on 2018/10/25,
-# which can be found here:
-# https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3318.pdf
-# The package dependencies and build instructions reflect those found in the
-# Security Policy.
+# which can be found at http://bit.ly/2IzFc0V.
+# The package dependencies and build instructions reflect those found on p. 19
+# of the Security Policy.
 ###############################################################################
 # Copyright 2019 NineFX, Inc.
 ###############################################################################
@@ -28,7 +27,8 @@ RUN set -eux; \
         cmake \
         unzip; \
     ## Dependency: Clang 6.0.1
-    wget -q http://releases.llvm.org/6.0.1/${CLANG}.tar.xz; \
+    wget \
+        http://releases.llvm.org/6.0.1/${CLANG}.tar.xz; \
     tar -C /usr/local -xJf ${CLANG}.tar.xz; \
     echo "export PATH=/usr/local/${CLANG}/bin/:\$PATH" >> /etc/profile; \
     ln -s /usr/local/${CLANG}/bin/clang /usr/bin/clang; \
@@ -51,7 +51,8 @@ RUN set -eux; \
         exit 1; \
     fi; \
     ## Dependency: Ninja 1.8.2
-    wget -q https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip; \
+    wget \
+        https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip; \
     unzip ninja-linux.zip -d /usr/bin; \
     if [ "ninja --version" -ne '1.8.2' ]; \
         then \
@@ -59,9 +60,12 @@ RUN set -eux; \
         exit 1; \
     fi; \
     ## Create CMake toolchain
-    printf "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" >${HOME}/toolchain; \
+    printf \
+        "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" \
+        >${HOME}/toolchain; \
     ## Verify BoringSSL
-    wget -q https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz; \
+    wget \
+        https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz; \
     if [ "sha256sum ${BORINGSSL}.tar.xz" -ne ${BORINGSSL_SHA256}} ]; \
         then \
         exit 1; \
@@ -69,7 +73,13 @@ RUN set -eux; \
     ## Build BoringSSL
     tar -xJf ${BORINGSSL}.tar.xz; \
     cd boringssl; \
-    mkdir build && cd build && cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DCMAKE_BUILD_TYPE=Release ..; \
+    mkdir build; \
+    cd build; \
+    cmake \
+        -GNinja \
+        -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain \
+        -DFIPS=1 \
+        -DCMAKE_BUILD_TYPE=Release ..; \
     ninja; \
     ninja run_tests
 
