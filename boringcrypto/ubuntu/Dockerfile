@@ -1,4 +1,16 @@
-FROM ubuntu:16.04
+###############################################################################
+###############################################################################
+# This Docker build for BoringSSL is FIPS 140-2 validated using the
+# BoringCrypto FIPS 140-2 Security Policy published by Google on 2018/10/25,
+# which can be found here:
+# https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3318.pdf
+# The package dependencies and build instructions reflect those found in the
+# Security Policy.
+###############################################################################
+# Copyright 2019 NineFX, Inc.
+###############################################################################
+
+FROM ubuntu:16.04 AS build
 
 ENV CLANG clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04
 ENV GO go1.10.3.linux-amd64
@@ -7,9 +19,10 @@ ENV BORINGSSL_SHA256 b12ad676ee533824f698741bd127f6fbc82c46344398a6d78d25e62c6c4
 
 RUN set -eux; \
     apt-get -y update; \
-    ## Build dependencies
+    ## Pre-dependencies/boilerplate packages
     apt-get -y install \
         ca-certificates \
+        build-essential \
         wget \
         xz-utils \
         cmake \
@@ -56,7 +69,13 @@ RUN set -eux; \
     ## Build BoringSSL
     tar -xJf ${BORINGSSL}.tar.xz; \
     cd boringssl; \
-    mkdir build && cd build && cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DCMAKE_BUILD_TYPE=Release..; \
+    mkdir build && cd build && cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DCMAKE_BUILD_TYPE=Release ..; \
     ninja; \
-    ninja run_tests; \
-    ./tool/bssl isfips
+    ninja run_tests
+
+
+FROM ubuntu:18.04
+
+COPY --from=build /boringssl /boringssl
+
+RUN ./boringssl/build/tool/bssl isfips
