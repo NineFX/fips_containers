@@ -15,8 +15,8 @@ RUN set -eux; \
         cmake \
         unzip; \
     ## Dependency: Clang 6.0.1
-    wget http://releases.llvm.org/6.0.1/${CLANG}.tar.xz; \
-    tar -C /usr/local -xJvf ${CLANG}.tar.xz; \
+    wget -q http://releases.llvm.org/6.0.1/${CLANG}.tar.xz; \
+    tar -C /usr/local -xJf ${CLANG}.tar.xz; \
     echo "export PATH=/usr/local/${CLANG}/bin/:\$PATH" >> /etc/profile; \
     ln -s /usr/local/${CLANG}/bin/clang /usr/bin/clang; \
     ln -s /usr/local/${CLANG}/bin/clang++ /usr/bin/clang++; \
@@ -26,8 +26,8 @@ RUN set -eux; \
         exit 1; \
     fi; \
     ## Dependency: Go 1.10.3
-    wget https://dl.google.com/go/${GO}.tar.gz; \
-    tar -C /usr/local -xzvf ${GO}.tar.gz; \
+    wget -q https://dl.google.com/go/${GO}.tar.gz; \
+    tar -C /usr/local -xzf ${GO}.tar.gz; \
     echo "export PATH=\$PATH:/usr/local/go/bin" >> /etc/profile; \
     ln -s /usr/local/go/bin/go /usr/bin/go; \
     ln -s /usr/local/go/bin/godoc /usr/bin/godoc; \
@@ -38,7 +38,7 @@ RUN set -eux; \
         exit 1; \
     fi; \
     ## Dependency: Ninja 1.8.2
-    wget https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip; \
+    wget -q https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip; \
     unzip ninja-linux.zip -d /usr/bin; \
     if [ "ninja --version" -ne '1.8.2' ]; \
         then \
@@ -48,13 +48,13 @@ RUN set -eux; \
     ## Create CMake toolchain
     printf "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" >${HOME}/toolchain; \
     ## Verify BoringSSL
-    wget https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz; \
+    wget -q https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz; \
     if [ "sha256sum ${BORINGSSL}.tar.xz" -ne ${BORINGSSL_SHA256}} ]; \
         then \
         exit 1; \
     fi; \
     ## Build BoringSSL
-    tar -xJvf ${BORINGSSL}.tar.xz; \
+    tar -xJf ${BORINGSSL}.tar.xz; \
     cd boringssl; \
     mkdir build && cd build && cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DCMAKE_BUILD_TYPE=Release..; \
     ninja; \
