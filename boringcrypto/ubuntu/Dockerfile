@@ -68,6 +68,7 @@ RUN set -eux; \
         https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz; \
     if [ "sha256sum ${BORINGSSL}.tar.xz" -ne ${BORINGSSL_SHA256}} ]; \
         then \
+        echo 'Fatal: invalid sha256sum for ${BORINGSSL}!'; \
         exit 1; \
     fi; \
     ## Build BoringSSL
