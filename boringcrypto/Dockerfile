@@ -10,6 +10,7 @@
 # Copyright 2019 NineFX, Inc.
 #################################################################################################################################
 
+### BUILD IMAGE
 FROM ubuntu:16.04 AS build
 
 ENV CLANG clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04
@@ -20,12 +21,12 @@ ENV BORINGSSL_SHA256 b12ad676ee533824f698741bd127f6fbc82c46344398a6d78d25e62c6c4
 RUN set -eux; \
     apt-get -y update; \
     ## Pre-dependencies/boilerplate packages
-    apt-get -y --no-install-recommends install \
-        ca-certificates=20170717~16.04.1 \
+    apt-get -y install --no-install-recommends \
+        ca-certificates=20170717~16.04.2 \
         build-essential=12.1ubuntu2 \
         wget=1.17.1-1ubuntu1.5 \
         xz-utils=5.1.1alpha+20120614-2ubuntu2 \
-        cmake=3.5.1-1ubuntu1 \
+        cmake=3.5.1-1ubuntu3 \
         unzip=6.0-20ubuntu1; \
     ## Dependency: Clang 6.0.1
     wget "http://releases.llvm.org/6.0.1/${CLANG}.tar.xz"; \
@@ -53,9 +54,8 @@ RUN set -eux; \
         exit 1; \
     fi; \
     ## Build BoringSSL
-    tar -xJf ${BORINGSSL}.tar.xz
-WORKDIR /boringssl
-RUN mkdir build
+    tar -xJf ${BORINGSSL}.tar.xz; \
+    mkdir -p boringssl/build
 WORKDIR /boringssl/build
 RUN cmake \
         -GNinja \
@@ -65,9 +65,9 @@ RUN cmake \
     ninja; \
     ninja run_tests
 
-## Deployment container
+### DEPLOYMENT IMAGE
 FROM ubuntu:18.04
 
 COPY --from=build /boringssl /boringssl
 
-RUN ./boringssl/build/tool/bssl isfips
+CMD [ "./boringssl/build/tool/bssl", "isfips" ]
