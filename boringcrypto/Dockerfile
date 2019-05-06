@@ -1,7 +1,7 @@
 #################################################################################################################################
 # This Docker build for BoringSSL is FIPS 140-2 validated by the BoringCrypto FIPS 140-2 Security Policy published by Google on
 # 2018/10/25, which can be found at
-# https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3318.pdf .
+# https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3318.pdf
 #
 # The package dependencies and build instructions reflect those found on p. 19 of the Security Policy.
 #################################################################################################################################
