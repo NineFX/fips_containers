@@ -18,6 +18,7 @@ ENV GO go1.10.3.linux-amd64
 ENV BORINGSSL boringssl-66005f41fbc3529ffe8d007708756720529da20d
 ENV BORINGSSL_SHA256 b12ad676ee533824f698741bd127f6fbc82c46344398a6d78d25e62c6c418c73
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -eux; \
     apt-get -y update; \
     ## Pre-dependencies/boilerplate packages
@@ -48,7 +49,8 @@ RUN set -eux; \
     printf "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" > /toolchain; \
     ## Verify BoringSSL
     wget "https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz"; \
-    if [ "$(sha256sum ${BORINGSSL}.tar.xz)" -ne ${BORINGSSL_SHA256} ]; \
+    sha256="$(sha256sum ${BORINGSSL}.tar.xz | cut -d' ' -f1)"; \
+    if [ "$sha256" != "${BORINGSSL_SHA256}" ]; \
         then \
         echo "Fatal: invalid sha256sum for ${BORINGSSL}!"; \
         exit 1; \
@@ -61,7 +63,8 @@ RUN cmake \
         -GNinja \
         -DCMAKE_TOOLCHAIN_FILE=/toolchain \
         -DFIPS=1 \
-        -DCMAKE_BUILD_TYPE=Release ..; \
+        -DCMAKE_BUILD_TYPE=Release \
+        ..; \
     ninja; \
     ninja run_tests
 
