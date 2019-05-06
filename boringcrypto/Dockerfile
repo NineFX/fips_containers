@@ -48,7 +48,7 @@ RUN set -eux; \
     printf "set(CMAKE_C_COMPILER \"clang\")\nset(CMAKE_CXX_COMPILER \"clang++\")\n" > /toolchain; \
     ## Verify BoringSSL
     wget "https://commondatastorage.googleapis.com/chromium-boringssl-docs/fips/${BORINGSSL}.tar.xz"; \
-    if [ "sha256sum ${BORINGSSL}.tar.xz" -ne ${BORINGSSL_SHA256} ]; \
+    if [ "$(sha256sum ${BORINGSSL}.tar.xz)" -ne ${BORINGSSL_SHA256} ]; \
         then \
         echo "Fatal: invalid sha256sum for ${BORINGSSL}!"; \
         exit 1; \
